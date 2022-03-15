@@ -6,11 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1
-        - /RobotModel1/Status1
-        - /DepthCloud1/Auto Size1
+        - /TF1
+        - /TF1/Frames1
       Splitter Ratio: 0.5
-    Tree Height: 362
+    Tree Height: 513
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -114,7 +113,7 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
@@ -122,46 +121,125 @@ Visualization Manager:
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
       Name: RobotModel
-      Robot Description: "robot/robot_description"
+      Robot Description: robot/robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
-    - Alpha: 1
-      Auto Size:
-        Auto Size Factor: 1
-        Value: true
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/DepthCloud
-      Color: 255; 255; 255
-      Color Image Topic: ""
-      Color Transformer: RGB8
-      Color Transport Hint: raw
-      Decay Time: 0
-      Depth Map Topic: /camera/depth/image_raw
-      Depth Map Transport Hint: raw
+    - Class: rviz/TF
       Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: DepthCloud
-      Occlusion Compensation:
-        Occlusion Time-Out: 30
-        Value: false
-      Position Transformer: XYZ
-      Queue Size: 5
-      Selectable: true
-      Size (Pixels): 3
-      Style: Flat Squares
-      Topic Filter: true
-      Use Fixed Frame: true
-      Use rainbow: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        cart_frame:
+          Value: true
+        first_index=0:
+          Value: true
+        front:
+          Value: true
+        last_index=1080:
+          Value: true
+        left:
+          Value: true
+        left_gap:
+          Value: true
+        right:
+          Value: true
+        right_gap:
+          Value: true
+        robot_base_docking_contact_link:
+          Value: false
+        robot_base_footprint:
+          Value: false
+        robot_base_link:
+          Value: true
+        robot_front_cover_link:
+          Value: false
+        robot_front_laser_base_link:
+          Value: false
+        robot_front_laser_link:
+          Value: false
+        robot_front_rgbd_camera_depth_frame:
+          Value: false
+        robot_front_rgbd_camera_depth_optical_frame:
+          Value: false
+        robot_front_rgbd_camera_link:
+          Value: false
+        robot_front_rgbd_camera_rgb_base_link:
+          Value: false
+        robot_front_rgbd_camera_rgb_optical_frame:
+          Value: false
+        robot_imu_link:
+          Value: false
+        robot_left_wheel_link:
+          Value: true
+        robot_odom:
+          Value: false
+        robot_omni_backwheel_link:
+          Value: false
+        robot_omni_front_leftwheel_link:
+          Value: false
+        robot_omni_front_rightwheel_link:
+          Value: false
+        robot_right_wheel_link:
+          Value: true
+        robot_top_cover_link:
+          Value: false
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        robot_odom:
+          cart_frame:
+            {}
+          first_index=0:
+            {}
+          front:
+            {}
+          last_index=1080:
+            {}
+          left:
+            {}
+          left_gap:
+            {}
+          right:
+            {}
+          right_gap:
+            {}
+          robot_base_footprint:
+            robot_base_link:
+              robot_front_cover_link:
+                robot_base_docking_contact_link:
+                  {}
+              robot_front_laser_base_link:
+                robot_front_laser_link:
+                  {}
+              robot_front_rgbd_camera_rgb_base_link:
+                robot_front_rgbd_camera_depth_frame:
+                  robot_front_rgbd_camera_depth_optical_frame:
+                    {}
+                robot_front_rgbd_camera_link:
+                  {}
+                robot_front_rgbd_camera_rgb_optical_frame:
+                  {}
+              robot_imu_link:
+                {}
+              robot_left_wheel_link:
+                {}
+              robot_omni_backwheel_link:
+                {}
+              robot_omni_front_leftwheel_link:
+                {}
+              robot_omni_front_rightwheel_link:
+                {}
+              robot_right_wheel_link:
+                {}
+            robot_top_cover_link:
+              {}
+      Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
@@ -191,7 +269,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.644041061401367
+      Distance: 3.0885610580444336
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -199,25 +277,25 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0
-        Y: 4.76837158203125e-07
-        Z: 0
+        X: 0.40107277035713196
+        Y: -0.5603811740875244
+        Z: -0.10009078681468964
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7853980660438538
+      Pitch: 1.3853976726531982
       Target Frame: <Fixed Frame>
-      Yaw: 0.7853979468345642
+      Yaw: 4.64858341217041
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 660
+  Height: 811
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd000000040000000000000156000001f5fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003e000001f5000000cb00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000001f9fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003c000001f9000000a500fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004690000003efc0100000002fb0000000800540069006d00650100000000000004690000026c00fffffffb0000000800540069006d006501000000000000045000000000000000000000030d000001f500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000002270000028cfc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003e0000028c000000cb00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000001f9fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003c000001f9000000a500fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000005e10000003efc0100000002fb0000000800540069006d00650100000000000005e10000026c00fffffffb0000000800540069006d00650100000000000004500000000000000000000003b40000028c00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -226,6 +304,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: true
-  Width: 1129
+  Width: 1505
   X: 48
   Y: 10
