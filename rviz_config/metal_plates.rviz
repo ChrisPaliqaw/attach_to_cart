@@ -131,22 +131,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        cart_frame:
-          Value: true
-        first_index=0:
-          Value: true
-        front:
-          Value: true
-        last_index=1080:
-          Value: true
-        left:
-          Value: true
-        left_gap:
-          Value: true
-        right:
-          Value: true
-        right_gap:
-          Value: true
         robot_base_docking_contact_link:
           Value: false
         robot_base_footprint:
@@ -193,22 +177,6 @@ Visualization Manager:
       Show Names: true
       Tree:
         robot_odom:
-          cart_frame:
-            {}
-          first_index=0:
-            {}
-          front:
-            {}
-          last_index=1080:
-            {}
-          left:
-            {}
-          left_gap:
-            {}
-          right:
-            {}
-          right_gap:
-            {}
           robot_base_footprint:
             robot_base_link:
               robot_front_cover_link:
@@ -245,7 +213,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: robot_base_link
+    Fixed Frame: robot_odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -269,7 +237,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.0885610580444336
+      Distance: 3.459188461303711
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

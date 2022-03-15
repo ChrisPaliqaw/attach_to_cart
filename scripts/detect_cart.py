@@ -30,15 +30,20 @@ class DetectCart():
     HALF_PLATE_GAP = 0.3
     CART_FRAME = "cart_frame"
     ROBOT_BASE_LINK = "robot_base_link"
+    RANGE_MAX = 20.0
 
     @staticmethod
     def yawAndDistanceToRosXY(yaw, distance):
-        theta = (-math.pi / 2) + yaw
+        if math.isinf(distance):
+            distance = DetectCart.RANGE_MAX
+        rospy.loginfo(f"New distance is {distance}")
+        theta = (math.pi / 2) + yaw
         y = -(distance * (math.cos(theta)))
-        x = -(distance * (math.sin(theta)))
+        x = (distance * (math.sin(theta)))
         rospy.loginfo(f"{theta=} {x=} {y=}")
-        return y, x
+        return x, y
     
+    """
     @staticmethod
     def orientation(trans1, trans2, orientation):
         # If we define dx = x2 - x1 and dy = y2 - y1, then the normals are (-dy, dx) and (dy, -dx)
@@ -50,6 +55,7 @@ class DetectCart():
         
 
         return y, x
+    """
     
     def __init__(self):
         self._transform_broadcaster = tf.TransformBroadcaster()
@@ -73,7 +79,7 @@ class DetectCart():
                 DetectCart.ODOM_FRAME, DetectCart.ROBOT_BASE_LINK, rospy.Time(0), rospy.Duration(3))
             rospy.loginfo("Received odom to base_link tf...")
             try:
-                (self._base_link_trans, self._base_link_rot) = self._listener.lookupTransform(
+                self._base_link_trans, self._base_link_rot = self._listener.lookupTransform(
                     DetectCart.ODOM_FRAME, DetectCart.ROBOT_BASE_LINK, rospy.Time(0))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 continue
@@ -82,6 +88,23 @@ class DetectCart():
     def __scan(self, laser_scan: LaserScan):
         if self._base_link_trans is None or self._base_link_rot is None:
             return
+    
+        self.publish_tf_relative_to_robot(0, 1, "front")
+        self.publish_tf_relative_to_robot(-math.pi / 6, 1, "left")
+        self.publish_tf_relative_to_robot(math.pi / 6, 1, "right")
+        """
+
+        first_index = 0
+        last_index = len(laser_scan.intensities) - 1
+        center_index = len(laser_scan.intensities) / 2
+        first_index_yaw = (first_index - center_index) * laser_scan.angle_increment
+        last_index_yaw = (last_index - center_index) * laser_scan.angle_increment
+        first_index_distance = laser_scan.ranges[first_index]
+        last_index_distance = laser_scan.ranges[last_index]
+        self.publish_tf_relative_to_robot(first_index_yaw, first_index_distance, f"first_index")
+        rospy.loginfo(f"{laser_scan.ranges[first_index]=}")
+        self.publish_tf_relative_to_robot(last_index_yaw, last_index_distance, f"last_index")
+        rospy.loginfo(f"{laser_scan.ranges[last_index]=}")
 
         first_plate_index = None
         last_plate_index = None
@@ -129,39 +152,28 @@ class DetectCart():
         left_gap_distance = laser_scan.ranges[left_gap_index]
         right_gap_distance = laser_scan.ranges[right_gap_index]
 
-        center_index = len(laser_scan.intensities) / 2
         left_gap_yaw = (left_gap_index - center_index) * laser_scan.angle_increment
         right_gap_yaw = (right_gap_index - center_index) * laser_scan.angle_increment
 
         self.publish_tf_relative_to_robot(left_gap_yaw, left_gap_distance, 'left_gap')
         self.publish_tf_relative_to_robot(right_gap_yaw, right_gap_distance, 'right_gap')
         # self.publish_tf_relative_to_robot(center_gap_yaw, center_gap_distance, DetectCart.CART_FRAME)
-        self.publish_tf_relative_to_robot(0, 1, "front")
-        self.publish_tf_relative_to_robot(-math.pi / 6, 1, "left")
-        self.publish_tf_relative_to_robot(math.pi / 6, 1, "right")
-
-        first_index = 0
-        last_index = len(laser_scan.intensities) - 1
-        first_index_yaw = (first_index - center_index) * laser_scan.angle_increment
-        last_index_yaw = (last_index - center_index) * laser_scan.angle_increment
-        first_index_distance = laser_scan.ranges[first_index]
-        last_index_distance = laser_scan.ranges[last_index]
-        self.publish_tf_relative_to_robot(first_index_yaw, first_index_distance, f"{first_index=}")
-        rospy.loginfo(f"{laser_scan.ranges[first_index]=}")
-        self.publish_tf_relative_to_robot(last_index_yaw, last_index_distance, f"{last_index=}")
-        rospy.loginfo(f"{laser_scan.ranges[last_index]=}")
 
         self.publish_cart_frame(left_gap_yaw, left_gap_distance, right_gap_yaw, right_gap_distance)
+        """
         
     def publish_tf_relative_to_robot(self, yaw, distance, frame_id):
         orientation_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0)
+        odom_to_base_link_euler = tf.transformations.euler_from_quaternion(self._base_link_rot)
+        rospy.loginfo(f"{odom_to_base_link_euler=}")
+        yaw -= odom_to_base_link_euler[2]
         x, y = DetectCart.yawAndDistanceToRosXY(yaw, distance)
 
-        x_odom = self._base_link_trans[0] + x
-        y_odom = self._base_link_trans[1] - y
+        x = self._base_link_trans[0] + x
+        y = self._base_link_trans[1] - y
 
         self._transform_broadcaster.sendTransform(
-            (x_odom, y_odom, 0),
+            (x, y, 0),
             orientation_quaternion,
             rospy.Time.now(),
             frame_id,
