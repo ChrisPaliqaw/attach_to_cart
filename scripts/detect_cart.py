@@ -32,7 +32,7 @@ class DetectCart():
     ODOM_FRAME = "robot_odom"
     HALF_PLATE_GAP = 0.3
     CART_FRAME = "static_cart"
-    ROBOT_BASE_LINK = "robot_front_laser_link"
+    ROBOT_LASER_BASE_LINK = "robot_front_laser_link"
     RANGE_MAX = 20.0
 
     @staticmethod
@@ -46,10 +46,10 @@ class DetectCart():
         rospy.loginfo(f"{theta=} {x=} {y=}")
         return x, y
     
-    # https://youtu.be/NAnaRaODs_s
+    # https://stackoverflow.com/questions/1243614/how-do-i-calculate-the-normal-vector-of-a-line-segment#:~:text=The%20normal%20vector%20(x'%2C,or%20(dx%2Cdy)%20.&text=Show%20activity%20on%20this%20post.,-m1%20%3D%20(y2%20%2D&text=m2%20%3D%20%2D1%20%2F%20m1%20%2F%2F,offset%20of%20new%20perpendicular%20line..
     @staticmethod
     def surfaceNormal(x1: float, y1: float, x2: float, y2: float) -> float:
-        return (y2 - y1) / (x2 - x1)
+        return (x2 - x1) / (y2 - y1)
 
     @staticmethod
     def getAverageHighIntensityIndex(laser_scan: LaserScan) -> int:
@@ -81,11 +81,11 @@ class DetectCart():
                 # This avoids also the issue of not finding the frame by time out
                 rospy.loginfo("Waiting for odom to base_link tf...")
                 self._listener.waitForTransform(
-                    DetectCart.ODOM_FRAME, DetectCart.ROBOT_BASE_LINK, rospy.Time(0), rospy.Duration(3))
+                    DetectCart.ODOM_FRAME, DetectCart.ROBOT_LASER_BASE_LINK, rospy.Time(0), rospy.Duration(3))
                 rospy.loginfo("...received odom to base_link tf.")
                 try:
                     self._base_link_trans, self._base_link_rot = self._listener.lookupTransform(
-                        DetectCart.ODOM_FRAME, DetectCart.ROBOT_BASE_LINK, rospy.Time(0))
+                        DetectCart.ODOM_FRAME, DetectCart.ROBOT_LASER_BASE_LINK, rospy.Time(0))
                     return
                 except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                     continue
