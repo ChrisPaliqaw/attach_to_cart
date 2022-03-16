@@ -31,7 +31,7 @@ class DetectCart():
     SCAN_TOPIC = "scan"
     ODOM_FRAME = "robot_odom"
     HALF_PLATE_GAP = 0.3
-    CART_FRAME = "cart_frame"
+    CART_FRAME = "static_cart"
     ROBOT_BASE_LINK = "robot_front_laser_link"
     RANGE_MAX = 20.0
 
@@ -45,6 +45,11 @@ class DetectCart():
         x = (distance * (math.sin(theta)))
         rospy.loginfo(f"{theta=} {x=} {y=}")
         return x, y
+    
+    # https://youtu.be/NAnaRaODs_s
+    @staticmethod
+    def surfaceNormal(x1: float, y1: float, x2: float, y2: float) -> float:
+        return (y2 - y1) / (x2 - x1)
 
     @staticmethod
     def getAverageHighIntensityIndex(laser_scan: LaserScan) -> int:
@@ -123,7 +128,9 @@ class DetectCart():
             lx, ly = self.tf_relative_to_robot(left_plate_yaw, left_plate_range)
             rx, ry = self.tf_relative_to_robot(right_plate_yaw, right_plate_range)
 
-            orientation_quaternion = tf.transformations.quaternion_from_euler(0, 0, 0)
+            slope_surface_normal = DetectCart.surfaceNormal(lx, ly, rx, ry)
+            orientation_quaternion = tf.transformations.quaternion_from_euler(
+                0, 0, slope_surface_normal)
             cfx = statistics.mean((lx, rx))
             cfy = statistics.mean((ly, ry))
 
