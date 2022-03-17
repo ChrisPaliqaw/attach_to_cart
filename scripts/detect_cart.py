@@ -128,9 +128,12 @@ class DetectCart():
             lx, ly = self.tf_relative_to_robot(left_plate_yaw, left_plate_range)
             rx, ry = self.tf_relative_to_robot(right_plate_yaw, right_plate_range)
 
+            rospy.loginfo(f"{(lx, ly, rx, ry)=}")
             slope_surface_normal = DetectCart.surfaceNormal(lx, ly, rx, ry)
+            rospy.loginfo(f"{slope_surface_normal=}")
+            radians_surface_normal = math.atan(slope_surface_normal)
             orientation_quaternion = tf.transformations.quaternion_from_euler(
-                0, 0, slope_surface_normal)
+                0, 0, radians_surface_normal)
             cfx = statistics.mean((lx, rx))
             cfy = statistics.mean((ly, ry))
 
@@ -143,7 +146,7 @@ class DetectCart():
                                                     DetectCart.ODOM_FRAME)
                 self._rate.sleep()
         
-    def tf_relative_to_robot(self, yaw, distance) -> (int, int):
+    def tf_relative_to_robot(self, yaw, distance) -> (float, float):
         odom_to_base_link_euler = tf.transformations.euler_from_quaternion(self._base_link_rot)
         rospy.loginfo(f"{odom_to_base_link_euler=}")
         yaw -= odom_to_base_link_euler[2]

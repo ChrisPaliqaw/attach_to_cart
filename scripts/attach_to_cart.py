@@ -80,7 +80,7 @@ class AttachState(Enum):
 class AttachToCart():
     ORIENTATION_FUZZ = 0.01
     TRANSFORM_FUZZ = 0.01
-    LINEAR_VELOCITY = 0.1
+    LINEAR_VELOCITY = 0.05
     ANGULAR_VELOCITY = 0.3
     ROBOT_BASE_LINK = "robot_base_link"
     CMD_VEL_TOPIC = "/robot/cmd_vel"
@@ -109,18 +109,39 @@ class AttachToCart():
             return
         elif self._attach_state == AttachState.ALIGN_WITH_CART_ORIENTATION:
             robot_yaw = odometry.pose.pose.orientation.z
-            goal_yaw = -self._static_frame_rot[2]
+            # The negative of the plate's normal, since they should face each other
+            goal_yaw = self._static_frame_rot[2]
             yaw_diff = abs(goal_yaw - robot_yaw)
             rospy.loginfo(f"{yaw_diff=}")
             if yaw_diff < AttachToCart.ORIENTATION_FUZZ:
-                twist = Twist()
                 self._attach_state = AttachState.ALIGN_WITH_CART_Y
                 self.__print_state()
-                self._cmd_vel_pub.publish(twist)
+                rospy.loginfo(f"{odometry=}")
+                rospy.loginfo(f"{self._static_frame_trans=}")
+                self._cmd_vel_pub.publish(Twist())
             else:
                 sign = 1 if robot_yaw < goal_yaw else -1
                 twist = Twist()
                 twist.angular.z = sign * AttachToCart.ANGULAR_VELOCITY
+                self._cmd_vel_pub.publish(twist)
+        elif self._attach_state == AttachState.ALIGN_WITH_CART_Y:
+            robot_x = odometry.pose.pose.position.x
+            # rospy.loginfo(f"{robot_x=}")
+            goal_x = self._static_frame_trans[0]
+            # rospy.loginfo(f"{goal_x=}")
+            x_diff = abs(goal_x - robot_x)
+            # rospy.loginfo(f"{x_diff=}")
+            if x_diff < AttachToCart.TRANSFORM_FUZZ:
+                self._attach_state = AttachState.MOVE_INTO_CART
+                self.__print_state()
+                self._cmd_vel_pub.publish(Twist())
+            else:
+                sign = -1 if robot_x < goal_x else 1
+                twist = Twist()
+                # Note that the robot must move in y to achieve
+                # the correct x pose, since it is perpindicular to
+                # robot odom
+                twist.linear.y = (sign * AttachToCart.LINEAR_VELOCITY)
                 self._cmd_vel_pub.publish(twist)
 
     
