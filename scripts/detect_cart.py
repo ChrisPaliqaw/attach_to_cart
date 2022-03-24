@@ -35,6 +35,8 @@ class DetectCart():
     ROBOT_LASER_BASE_LINK = "robot_front_laser_link"
     RANGE_MAX = 20.0
 
+    DETECT_CART_ROSPARAM = "detect_cart"
+
     @staticmethod
     def yawAndDistanceToRosXY(yaw, distance):
         if math.isinf(distance):
@@ -71,6 +73,12 @@ class DetectCart():
         self._base_link_rot = None
         self._lock = threading.Lock()
         self.__robot_odom_tf()
+
+        is_detect_cart = False
+        while not is_detect_cart:
+            rospy.loginfo("Waiting to detect cart")
+            is_detect_cart = rospy.get_param(DetectCart.DETECT_CART_ROSPARAM)
+            rospy.sleep(1)
         self._scan_sub = rospy.Subscriber(DetectCart.SCAN_TOPIC, LaserScan, self.__scan)
 
     def __robot_odom_tf(self):
@@ -128,9 +136,12 @@ class DetectCart():
             lx, ly = self.tf_relative_to_robot(left_plate_yaw, left_plate_range)
             rx, ry = self.tf_relative_to_robot(right_plate_yaw, right_plate_range)
 
+            rospy.loginfo(f"{(lx, ly, rx, ry)=}")
             slope_surface_normal = DetectCart.surfaceNormal(lx, ly, rx, ry)
+            rospy.loginfo(f"{slope_surface_normal=}")
+            radians_surface_normal = math.atan(slope_surface_normal)
             orientation_quaternion = tf.transformations.quaternion_from_euler(
-                0, 0, slope_surface_normal)
+                0, 0, radians_surface_normal)
             cfx = statistics.mean((lx, rx))
             cfy = statistics.mean((ly, ry))
 
@@ -143,7 +154,7 @@ class DetectCart():
                                                     DetectCart.ODOM_FRAME)
                 self._rate.sleep()
         
-    def tf_relative_to_robot(self, yaw, distance) -> (int, int):
+    def tf_relative_to_robot(self, yaw, distance) -> (float, float):
         odom_to_base_link_euler = tf.transformations.euler_from_quaternion(self._base_link_rot)
         rospy.loginfo(f"{odom_to_base_link_euler=}")
         yaw -= odom_to_base_link_euler[2]

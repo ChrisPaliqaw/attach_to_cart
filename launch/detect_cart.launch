@@ -1,9 +1,8 @@
 <launch>
-
+  <param name="detect_cart" type="bool" value="false" />
   <node pkg ="attach_to_cart"
         type="detect_cart.py"
         name="$(anon detect_cart)"
         output="screen">
   </node>
-
 </launch>
